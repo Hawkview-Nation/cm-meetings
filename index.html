@@ -1,0 +1,325 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Meeting Confidence Coach</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #0f0f0f;
+        color: #e0e0e0;
+    }
+
+    /* Header */
+    #header {
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #e0e0e0;
+        border-bottom: 2px solid #009688;
+    }
+
+    /* Welcome Screen */
+    #welcome-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 40px;
+        text-align: center;
+    }
+
+    #welcome-screen p {
+        max-width: 80%;
+        font-size: 18px;
+        line-height: 1.5;
+        margin-bottom: 30px;
+    }
+
+    .welcome-button {
+        background-color: #009688;
+        color: #ffffff;
+        border: none;
+        padding: 15px 20px;
+        margin: 10px 0;
+        width: 70%;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .welcome-button:hover {
+        background-color: #00bfa5;
+    }
+
+    /* Chat Screen */
+    #chat-screen {
+        display: none;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    #chat-header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 2px solid #009688;
+    }
+
+    #home-btn {
+        background-color: transparent;
+        color: #009688;
+        border: 1px solid #009688;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 15px;
+    }
+
+    #chat-window {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .message {
+        max-width: 75%;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        line-height: 1.4;
+    }
+
+    .user {
+        background-color: #1e1e1e;
+        margin-left: auto;
+    }
+
+    .bot {
+        background-color: #009688;
+        color: #ffffff;
+        margin-right: auto;
+    }
+
+    /* Input Area */
+    #input-area {
+        display: flex;
+        padding: 15px;
+        border-top: 2px solid #009688;
+        gap: 10px;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        font-size: 16px;
+    }
+
+    #send-btn {
+        background-color: #009688;
+        color: #ffffff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    #send-btn:hover {
+        background-color: #00bfa5;
+    }
+
+    #speak-btn {
+        background-color: #009688;
+        color: #ffffff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        min-width: 120px;
+    }
+
+    #speak-btn.listening {
+        background-color: #c62828;
+    }
+
+    /* Typing Indicator */
+    #typing {
+        font-style: italic;
+        opacity: 0.7;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="header">Meeting Confidence Coach</div>
+
+<!-- Welcome Screen -->
+<div id="welcome-screen">
+    <p>
+        Hi! I’m your Meeting Confidence Coach. I can help you practice speaking up in meetings,
+        personalize the phrases from your Meeting Rescue Kit, or simulate a real meeting situation with you.
+        Choose one of the options below to get started.
+    </p>
+
+    <button class="welcome-button" onclick="startMode('scenario')">Practice a Meeting Scenario</button>
+    <button class="welcome-button" onclick="startMode('phrases')">Personalize My Phrases</button>
+    <button class="welcome-button" onclick="startMode('sentence')">Improve My Sentence</button>
+    <button class="welcome-button" onclick="startMode('confidence')">Build My Confidence</button>
+    <button class="welcome-button" onclick="startMode('roleplay')">Meeting Role Play</button>
+</div>
+
+<!-- Chat Screen -->
+<div id="chat-screen">
+    <div id="chat-header">
+        <button id="home-btn" onclick="goHome()">Home</button>
+        <span>Meeting Confidence Coach</span>
+    </div>
+
+    <div id="chat-window"></div>
+
+    <div id="input-area">
+        <input id="user-input" type="text" placeholder="Type your message..." />
+        <button id="speak-btn" onclick="startSpeech()">Speak Now</button>
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    let mode = "";
+    let recognizing = false;
+    let recognition = null;
+
+    function startMode(selectedMode) {
+        mode = selectedMode;
+
+        document.getElementById("welcome-screen").style.display = "none";
+        document.getElementById("chat-screen").style.display = "flex";
+
+        let starterMessage = "";
+
+        if (mode === "scenario") {
+            starterMessage = "Great — let’s simulate a meeting. What kind of meeting do you want to practice?";
+        } else if (mode === "phrases") {
+            starterMessage = "Tell me your situation, and I’ll personalize the Meeting Rescue Kit phrases for you.";
+        } else if (mode === "sentence") {
+            starterMessage = "Type the sentence you want to say in a meeting, and I’ll help you make it clearer and more confident.";
+        } else if (mode === "confidence") {
+            starterMessage = "Let’s work on speaking up. What situations make you feel unsure in meetings?";
+        } else if (mode === "roleplay") {
+            starterMessage = "Let’s role play a meeting. Choose the type of meeting you want to practice:\n• Manager asking for updates\n• Client meeting\n• Team discussion\n• Handling disagreement\n• Presenting an idea";
+        }
+
+        addMessage(starterMessage, "bot");
+    }
+
+    function goHome() {
+        document.getElementById("chat-screen").style.display = "none";
+        document.getElementById("welcome-screen").style.display = "flex";
+        document.getElementById("chat-window").innerHTML = "";
+        document.getElementById("user-input").value = "";
+        stopSpeech();
+    }
+
+    function addMessage(text, sender) {
+        const chatWindow = document.getElementById("chat-window");
+        const msg = document.createElement("div");
+        msg.className = "message " + sender;
+        msg.textContent = text;
+        chatWindow.appendChild(msg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    async function sendMessage(textOverride = null) {
+        const input = document.getElementById("user-input");
+        const text = (textOverride !== null ? textOverride : input.value.trim());
+        if (!text) return;
+
+        addMessage(text, "user");
+        input.value = "";
+
+        addMessage("...", "bot");
+
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text, mode })
+        });
+
+        const data = await response.json();
+
+        const chatWindow = document.getElementById("chat-window");
+        chatWindow.removeChild(chatWindow.lastChild);
+
+        addMessage(data.reply, "bot");
+    }
+
+    function startSpeech() {
+        if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+            alert("Speech recognition is not supported in this browser.");
+            return;
+        }
+
+        if (recognizing) {
+            stopSpeech();
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+            recognizing = true;
+            const btn = document.getElementById("speak-btn");
+            btn.classList.add("listening");
+            btn.textContent = "Listening…";
+        };
+
+        recognition.onend = () => {
+            recognizing = false;
+            const btn = document.getElementById("speak-btn");
+            btn.classList.remove("listening");
+            btn.textContent = "Speak Now";
+        };
+
+        recognition.onerror = () => {
+            recognizing = false;
+            const btn = document.getElementById("speak-btn");
+            btn.classList.remove("listening");
+            btn.textContent = "Speak Now";
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            sendMessage(transcript);
+        };
+
+        recognition.start();
+    }
+
+    function stopSpeech() {
+        if (recognition && recognizing) {
+            recognition.stop();
+        }
+    }
+</script>
+
+</body>
+</html>
