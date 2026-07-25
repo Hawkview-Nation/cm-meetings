@@ -52,7 +52,7 @@
         padding: 15px 20px;
         margin: 8px 0;
         width: 100%;
-        max-width: 300px; /* Makes buttons shorter and uniform */
+        max-width: 300px;
         font-size: 16px;
         font-weight: bold;
         border-radius: 8px;
@@ -64,6 +64,7 @@
         background-color: #00bfa5;
     }
 
+    /* API Key Section */
     .api-key-container {
         margin-top: 40px;
         padding: 20px;
@@ -72,16 +73,43 @@
         border: 1px solid #333;
         width: 100%;
         max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .api-key-container input {
         width: 90%;
         padding: 10px;
         margin-top: 10px;
+        margin-bottom: 15px;
         border-radius: 4px;
         border: 1px solid #555;
         background-color: #2a2a2a;
         color: white;
+        text-align: center;
+    }
+
+    .save-key-btn {
+        background-color: #444;
+        color: #ffffff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .save-key-btn:hover {
+        background-color: #666;
+    }
+
+    #key-status {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #00bfa5;
+        display: none;
     }
 
     /* Chat Screen */
@@ -253,7 +281,9 @@
 
     <div class="api-key-container">
         <label for="api-key" style="font-size: 14px; color: #aaa;">Optional: Enter OpenAI API Key for real AI responses (leave blank for simulated testing):</label>
-        <input type="password" id="api-key" placeholder="sk-..." />
+        <input type="password" id="api-key" placeholder="sk-..." onkeypress="handleApiKeyPress(event)" />
+        <button class="save-key-btn" onclick="saveKey()">Save Key</button>
+        <div id="key-status">Key saved! Now choose an option above to begin.</div>
     </div>
 </div>
 
@@ -278,6 +308,26 @@
     let recognizing = false;
     let recognition = null;
     let conversationHistory = [];
+
+    // New function to handle saving the API key visually
+    function saveKey() {
+        const keyInput = document.getElementById("api-key").value.trim();
+        if (keyInput) {
+            document.getElementById("key-status").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("key-status").style.display = "none";
+            }, 4000);
+        } else {
+            alert("Please enter a valid API key first, or leave it blank to use simulated mode.");
+        }
+    }
+
+    // New function to allow pressing "Enter" in the API key box
+    function handleApiKeyPress(event) {
+        if (event.key === 'Enter') {
+            saveKey();
+        }
+    }
 
     function startMode(selectedMode) {
         mode = selectedMode;
