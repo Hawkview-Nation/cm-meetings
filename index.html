@@ -1,531 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Meeting Confidence Coach</title>
-
-<style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #0f0f0f;
-        color: #e0e0e0;
-    }
-
-    /* Header */
-    #header {
-        width: 100%;
-        padding: 20px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        color: #ffffff;
-        background-color: #1a1a1a;
-        border-bottom: 3px solid #009688;
-        box-sizing: border-box;
-    }
-
-    /* Welcome Screen */
-    #welcome-screen {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 40px 20px;
-        text-align: center;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    #welcome-screen p {
-        font-size: 18px;
-        line-height: 1.6;
-        margin-bottom: 30px;
-        color: #cccccc;
-    }
-
-    .welcome-button {
-        background-color: #009688;
-        color: #ffffff;
-        border: none;
-        padding: 15px 20px;
-        margin: 8px 0;
-        width: 100%;
-        max-width: 300px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    .welcome-button:hover {
-        background-color: #00bfa5;
-    }
-
-    /* API Key Section */
-    .api-key-container {
-        margin-top: 40px;
-        padding: 20px;
-        background-color: #1e1e1e;
-        border-radius: 8px;
-        border: 1px solid #333;
-        width: 100%;
-        max-width: 400px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .api-key-container input {
-        width: 90%;
-        padding: 10px;
-        margin-top: 10px;
-        margin-bottom: 15px;
-        border-radius: 4px;
-        border: 1px solid #555;
-        background-color: #2a2a2a;
-        color: white;
-        text-align: center;
-    }
-
-    .save-key-btn {
-        background-color: #444;
-        color: #ffffff;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .save-key-btn:hover {
-        background-color: #666;
-    }
-
-    #key-status {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #00bfa5;
-        display: none;
-    }
-
-    /* Chat Screen */
-    #chat-screen {
-        display: none;
-        flex-direction: column;
-        height: 100vh;
-        max-width: 800px;
-        margin: 0 auto;
-        background-color: #121212;
-    }
-
-    #chat-header {
-        display: flex;
-        align-items: center;
-        padding: 15px 20px;
-        border-bottom: 2px solid #009688;
-        background-color: #1a1a1a;
-    }
-
-    #home-btn {
-        background-color: transparent;
-        color: #009688;
-        border: 1px solid #009688;
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-right: 15px;
-        font-weight: bold;
-        transition: 0.2s;
-    }
-    
-    #home-btn:hover {
-        background-color: #009688;
-        color: #fff;
-    }
-
-    #chat-window {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .message {
-        max-width: 80%;
-        padding: 12px 16px;
-        margin-bottom: 15px;
-        border-radius: 12px;
-        line-height: 1.5;
-        word-wrap: break-word;
-    }
-
-    .user {
-        background-color: #2c2c2c;
-        margin-left: auto;
-        border-bottom-right-radius: 2px;
-    }
-
-    .bot {
-        background-color: #009688;
-        color: #ffffff;
-        margin-right: auto;
-        border-bottom-left-radius: 2px;
-    }
-
-    /* Options Buttons in Chat */
-    .options-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 15px;
-        margin-right: auto;
-        max-width: 80%;
-    }
-
-    .option-btn {
-        background-color: #1e1e1e;
-        color: #00bfa5;
-        border: 1px solid #00bfa5;
-        padding: 10px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .option-btn:hover {
-        background-color: #00bfa5;
-        color: #ffffff;
-    }
-
-    /* Input Area */
-    #input-area {
-        display: flex;
-        padding: 15px;
-        border-top: 2px solid #009688;
-        background-color: #1a1a1a;
-        gap: 10px;
-    }
-
-    #user-input {
-        flex: 1;
-        padding: 12px 15px;
-        border-radius: 8px;
-        border: 1px solid #333;
-        background-color: #2a2a2a;
-        color: #e0e0e0;
-        font-size: 16px;
-    }
-
-    #user-input:focus {
-        outline: none;
-        border-color: #009688;
-    }
-
-    .action-btn {
-        background-color: #009688;
-        color: #ffffff;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        transition: 0.2s;
-    }
-
-    .action-btn:hover {
-        background-color: #00bfa5;
-    }
-
-    #speak-btn {
-        background-color: #444;
-        min-width: 120px;
-    }
-
-    #speak-btn.listening {
-        background-color: #c62828;
-        animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meetings Rescue Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1.5s infinite steps(4, end);
+        }
+        @keyframes typing {
+            0%, 100% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+    </style>
 </head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col">
 
-<body>
-
-<div id="header">Meeting Confidence Coach</div>
-
-<!-- Welcome Screen -->
-<div id="welcome-screen">
-    <p>
-        Hi! I’m your Meeting Confidence Coach. I can help you practice speaking up in meetings,
-        personalize the phrases from your Meeting Rescue Kit, or simulate a real meeting situation with you.
-        Choose one of the options below to get started.
-    </p>
-
-    <button class="welcome-button" onclick="startMode('scenario')">Practice a Meeting Scenario</button>
-    <button class="welcome-button" onclick="startMode('phrases')">Personalize My Phrases</button>
-    <button class="welcome-button" onclick="startMode('sentence')">Improve My Sentence</button>
-    <button class="welcome-button" onclick="startMode('confidence')">Build My Confidence</button>
-    <button class="welcome-button" onclick="startMode('roleplay')">Meeting Role Play</button>
-
-    <div class="api-key-container">
-        <label for="api-key" style="font-size: 14px; color: #aaa;">Optional: Enter OpenAI API Key for real AI responses (leave blank for simulated testing):</label>
-        <input type="password" id="api-key" placeholder="sk-..." onkeypress="handleApiKeyPress(event)" />
-        <button class="save-key-btn" onclick="saveKey()">Save Key</button>
-        <div id="key-status">Key saved! Now choose an option above to begin.</div>
-    </div>
-</div>
-
-<!-- Chat Screen -->
-<div id="chat-screen">
-    <div id="chat-header">
-        <button id="home-btn" onclick="goHome()">Home</button>
-        <span style="font-size: 18px; font-weight: bold;">Meeting Confidence Coach</span>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="flex-1 flex flex-col items-center justify-center p-6">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center border border-gray-100">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Meetings Rescue Coach</h1>
+            <p class="text-gray-600 mb-6 text-sm">Enter the Access Code found in your Toolkit 'Read First' Documentation to unlock the coach.</p>
+            
+            <input type="text" id="access-code-input" placeholder="Enter Access Code" 
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition uppercase text-center font-bold tracking-widest mb-4">
+            
+            <button onclick="checkAccessCode()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+                Unlock Coach
+            </button>
+            <p id="login-error" class="text-red-500 text-sm mt-3 hidden">Incorrect Access Code. Please try again.</p>
+        </div>
     </div>
 
-    <div id="chat-window"></div>
+    <!-- APP SCREEN (Hidden by default) -->
+    <div id="app-screen" class="hidden flex-col h-screen max-w-3xl mx-auto w-full bg-white shadow-xl border-x border-gray-200">
+        <!-- Header -->
+        <header class="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md z-10">
+            <div>
+                <h1 class="text-xl font-bold">Meetings Rescue Coach</h1>
+                <p class="text-blue-200 text-xs">Interactive Practice Mode</p>
+            </div>
+            <button onclick="logout()" class="text-sm bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded transition">Lock</button>
+        </header>
 
-    <div id="input-area">
-        <input id="user-input" type="text" placeholder="Type your message..." onkeypress="handleKeyPress(event)" />
-        <button id="speak-btn" class="action-btn" onclick="startSpeech()">Speak</button>
-        <button id="send-btn" class="action-btn" onclick="sendMessage()">Send</button>
+        <!-- Chat Area -->
+        <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            <!-- Initial Greeting -->
+            <div class="flex items-start">
+                <div class="bg-blue-100 text-blue-900 p-3 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm">
+                    Hello! I am your Meetings Rescue Coach. Tell me about a meeting scenario you are nervous about, or a phrase you want to practice, and let's work on it together!
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white border-t border-gray-200">
+            <form id="chat-form" onsubmit="sendMessage(event)" class="flex gap-2">
+                <input type="text" id="user-input" placeholder="Type your message here..." required
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                <button type="submit" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition duration-200 flex items-center justify-center">
+                    Send
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    let mode = "";
-    let recognizing = false;
-    let recognition = null;
-    let conversationHistory = [];
+    <script>
+        // --- Access Code Logic ---
+        const CORRECT_CODE = "MEETINGS26";
 
-    // New function to handle saving the API key visually
-    function saveKey() {
-        const keyInput = document.getElementById("api-key").value.trim();
-        if (keyInput) {
-            document.getElementById("key-status").style.display = "block";
-            setTimeout(() => {
-                document.getElementById("key-status").style.display = "none";
-            }, 4000);
-        } else {
-            alert("Please enter a valid API key first, or leave it blank to use simulated mode.");
+        function checkAccessCode() {
+            const input = document.getElementById('access-code-input').value.trim().toUpperCase();
+            const errorMsg = document.getElementById('login-error');
+            
+            if (input === CORRECT_CODE) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('flex');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
         }
-    }
 
-    // New function to allow pressing "Enter" in the API key box
-    function handleApiKeyPress(event) {
-        if (event.key === 'Enter') {
-            saveKey();
+        function logout() {
+            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('flex');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('access-code-input').value = '';
+            document.getElementById('login-error').classList.add('hidden');
         }
-    }
 
-    function startMode(selectedMode) {
-        mode = selectedMode;
-        conversationHistory = [
-            { role: "system", content: "You are a supportive, encouraging Meeting Confidence Coach for non-native English speakers. Help them practice business meetings, correct their phrasing gently, and build their confidence." }
-        ];
-
-        document.getElementById("welcome-screen").style.display = "none";
-        document.getElementById("chat-screen").style.display = "flex";
-
-        let starterMessage = "";
-
-        if (mode === "scenario") {
-            starterMessage = "Great — let’s simulate a meeting. What kind of meeting do you want to practice?";
-            addMessage(starterMessage, "bot");
-        } else if (mode === "phrases") {
-            starterMessage = "Tell me your situation, and I’ll personalize the Meeting Rescue Kit phrases for you.";
-            addMessage(starterMessage, "bot");
-        } else if (mode === "sentence") {
-            starterMessage = "Type the sentence you want to say in a meeting, and I’ll help you make it clearer and more confident.";
-            addMessage(starterMessage, "bot");
-        } else if (mode === "confidence") {
-            starterMessage = "Let’s work on speaking up. What situations make you feel unsure in meetings?";
-            addMessage(starterMessage, "bot");
-        } else if (mode === "roleplay") {
-            starterMessage = "Let’s role play a meeting. Choose the type of meeting you want to practice:";
-            addMessage(starterMessage, "bot");
-            // Add clickable options instead of text list
-            addOptions([
-                "Manager asking for updates", 
-                "Client meeting", 
-                "Team discussion", 
-                "Handling disagreement", 
-                "Presenting an idea"
-            ]);
-        }
-        
-        conversationHistory.push({ role: "assistant", content: starterMessage });
-    }
-
-    function goHome() {
-        document.getElementById("chat-screen").style.display = "none";
-        document.getElementById("welcome-screen").style.display = "flex";
-        document.getElementById("chat-window").innerHTML = "";
-        document.getElementById("user-input").value = "";
-        stopSpeech();
-    }
-
-    function addMessage(text, sender) {
-        const chatWindow = document.getElementById("chat-window");
-        const msg = document.createElement("div");
-        msg.className = "message " + sender;
-        msg.textContent = text;
-        chatWindow.appendChild(msg);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-
-    function addOptions(optionsArray) {
-        const chatWindow = document.getElementById("chat-window");
-        const container = document.createElement("div");
-        container.className = "options-container";
-
-        optionsArray.forEach(optionText => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.textContent = optionText;
-            btn.onclick = () => {
-                // Remove buttons after selection
-                container.remove();
-                sendMessage(optionText);
-            };
-            container.appendChild(btn);
+        // Allow pressing Enter on the login screen
+        document.getElementById('access-code-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkAccessCode();
+            }
         });
 
-        chatWindow.appendChild(container);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
+        // --- Chat Logic ---
+        // We store the conversation history to give the AI context
+        let conversationHistory = [
+            { role: "system", content: "You are a supportive and expert communication coach helping a user prepare for difficult business meetings. Provide concise, actionable advice, and offer to roleplay scenarios. Keep responses encouraging and professional." }
+        ];
 
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    }
+        async function sendMessage(event) {
+            event.preventDefault();
+            
+            const inputField = document.getElementById('user-input');
+            const message = inputField.value.trim();
+            if (!message) return;
 
-    async function sendMessage(textOverride = null) {
-        const input = document.getElementById("user-input");
-        const text = (textOverride !== null ? textOverride : input.value.trim());
-        if (!text) return;
+            // 1. Add user message to UI
+            addMessageToUI(message, 'user');
+            
+            // 2. Add to history
+            conversationHistory.push({ role: "user", content: message });
+            
+            // Clear input
+            inputField.value = '';
+            
+            // 3. Show loading indicator
+            const loadingId = addLoadingIndicator();
 
-        addMessage(text, "user");
-        input.value = "";
-        conversationHistory.push({ role: "user", content: text });
-
-        // Add a temporary typing indicator
-        const chatWindow = document.getElementById("chat-window");
-        const typingMsg = document.createElement("div");
-        typingMsg.className = "message bot";
-        typingMsg.id = "typing-indicator";
-        typingMsg.textContent = "...";
-        chatWindow.appendChild(typingMsg);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-
-        const apiKey = document.getElementById("api-key").value.trim();
-        let reply = "";
-
-        if (apiKey) {
-            // Call actual OpenAI API
             try {
-                const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        messages: conversationHistory,
-                        max_tokens: 150
-                    })
+                // 4. Send to Vercel Backend (/api/chat)
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: conversationHistory })
                 });
+
                 const data = await response.json();
-                if (data.error) {
-                    reply = "Error: " + data.error.message;
+                
+                // Remove loading indicator
+                document.getElementById(loadingId).remove();
+
+                if (response.ok) {
+                    // Add AI response to UI and history
+                    addMessageToUI(data.reply, 'ai');
+                    conversationHistory.push({ role: "assistant", content: data.reply });
                 } else {
-                    reply = data.choices[0].message.content;
+                    addMessageToUI("Error: " + (data.error || "Could not connect to the coach."), 'error');
                 }
             } catch (error) {
-                reply = "Sorry, there was an error connecting to the AI. Please check your API key or internet connection.";
+                document.getElementById(loadingId).remove();
+                addMessageToUI("Network error. Please make sure you are connected to the internet.", 'error');
             }
-        } else {
-            // Simulated response for testing without an API key
-            setTimeout(() => {
-                document.getElementById("typing-indicator").remove();
-                reply = `(Simulated AI) That is a great start! To say "${text}" more confidently in a business setting, you might try: "I'd like to add that..." Keep practicing, you're doing great!`;
-                addMessage(reply, "bot");
-                conversationHistory.push({ role: "assistant", content: reply });
-            }, 1000);
-            return; // Exit early since we used setTimeout
         }
 
-        // Remove typing indicator and add real reply
-        document.getElementById("typing-indicator").remove();
-        addMessage(reply, "bot");
-        conversationHistory.push({ role: "assistant", content: reply });
-    }
+        function addMessageToUI(text, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "flex items-start " + (sender === 'user' ? "justify-end" : "");
 
-    function startSpeech() {
-        if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-            alert("Speech recognition is not supported in this browser. Try using Google Chrome.");
-            return;
+            let innerHTML = '';
+            if (sender === 'user') {
+                innerHTML = `<div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm">${escapeHTML(text)}</div>`;
+            } else if (sender === 'ai') {
+                innerHTML = `<div class="bg-blue-100 text-blue-900 p-3 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm whitespace-pre-wrap">${escapeHTML(text)}</div>`;
+            } else if (sender === 'error') {
+                innerHTML = `<div class="bg-red-100 text-red-700 p-3 rounded-2xl max-w-[85%] shadow-sm text-sm">${escapeHTML(text)}</div>`;
+            }
+
+            msgDiv.innerHTML = innerHTML;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        if (recognizing) {
-            stopSpeech();
-            return;
+        function addLoadingIndicator() {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            const id = 'loading-' + Date.now();
+            msgDiv.id = id;
+            msgDiv.className = "flex items-start";
+            msgDiv.innerHTML = `<div class="bg-gray-200 text-gray-500 p-3 rounded-2xl rounded-tl-none shadow-sm typing-indicator italic text-sm">Coach is typing</div>`;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return id;
         }
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onstart = () => {
-            recognizing = true;
-            const btn = document.getElementById("speak-btn");
-            btn.classList.add("listening");
-            btn.textContent = "Listening…";
-        };
-
-        recognition.onend = () => {
-            recognizing = false;
-            const btn = document.getElementById("speak-btn");
-            btn.classList.remove("listening");
-            btn.textContent = "Speak";
-        };
-
-        recognition.onerror = () => {
-            recognizing = false;
-            const btn = document.getElementById("speak-btn");
-            btn.classList.remove("listening");
-            btn.textContent = "Speak";
-        };
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            sendMessage(transcript);
-        };
-
-        recognition.start();
-    }
-
-    function stopSpeech() {
-        if (recognition && recognizing) {
-            recognition.stop();
+        // Simple HTML escaper to prevent XSS
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
