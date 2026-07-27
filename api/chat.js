@@ -1,4 +1,4 @@
-//api/chat.js
+//API/chat.js
 export default async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
